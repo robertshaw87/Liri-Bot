@@ -86,15 +86,13 @@ function chooseTwitter() {
         message: "Whose twitter would you like to see?",
         name: "userTwitter",
     }).then(function (response) {
-        if (response.userTwitter){
-            lookUpTwitter(response.userTwitter);
-        } else {
-            lookUpTwitter("jph_anderson");
-        }
+        lookUpTwitter(response.userTwitter);
     })
 }
 
 function lookUpTwitter(twitterName) {
+    if (!twitterName)
+        twitterName = "jph_anderson";
     console.log(twitterName);
 }
 
@@ -193,17 +191,11 @@ function displayMovie (movieObj) {
 function chooseText() {
     fs.readFile("random.txt", "utf8", function(error, data) {
         if (!error) {
-                  // We will then print the contents of data
             console.log(data);
-        
-            // Then split it by commas (to make it more readable)
-            var dataArr = data.split(", ");
-        
-            // We will then re-display the content as an array for later use.
-            console.log(dataArr);
+            var commandList = data.split(";")
+            console.log(commandList);
         } else
             error(error);
-     
       });
       
 }
