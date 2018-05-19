@@ -49,6 +49,11 @@ function error(errorMessage) {
     console.log("\n==============================\n");
 }
 
+// returns a random integer between 0 and the argument (inclusive)
+function randInt(x) {
+    return Math.floor(Math.random() * (x + 1));
+}
+
 function userChoose() {
     console.log("\n")
     inquirer.prompt([
@@ -70,7 +75,7 @@ function userChoose() {
                 chooseMovie();
                 break;
             case "Do what it says":
-                chooseText();
+                chooseRandom();
                 break;
             default:
                 end();
@@ -172,10 +177,10 @@ function displayMovie (movieObj) {
     var movieContent = "";
     movieContent += "\n\n==============================\n";
     movieContent += ("\n" + movieObj.Title + "\n" + movieObj.Released);
-    songContent += "\n";
+    movieContent += "\n";
     movieContent += ("\nCountry: " + movieObj.Country + "\nLanguage: " + movieObj.Language);
     movieContent += ("\nPlot: " + movieObj.Plot);
-    songContent += "\n";
+    movieContent += "\n";
     movieContent += ("\nIMDB: " + movieObj.imdbRating);
     var tomatoObj = movieObj.Ratings.find(function (elem) {
         return (elem.Source === "Rotten Tomatoes");
@@ -188,16 +193,45 @@ function displayMovie (movieObj) {
     liriLog(movieContent);
 }
 
-function chooseText() {
+function chooseRandom() {
     fs.readFile("random.txt", "utf8", function(error, data) {
         if (!error) {
-            console.log(data);
-            var commandList = data.split(";")
-            console.log(commandList);
+            var commandList = data.split(/\r\n|\n/);
+            var command = commandList[randInt(commandList.length - 1)];
+            command = command.split(" ")
+            parse(command);
         } else
             error(error);
       });
-      
+}
+
+function chooseUnknown() {
+    console.log("unrecognized command");
+}
+
+function parse(commandArray) {
+    var command = commandArray[0];
+    commandArray.splice(0, 1);
+    var input = commandArray.join(" ");
+    switch (command) {
+        case "my-tweets":
+            lookUpTwitter(input);
+            break;
+        case "spotify-this-song":
+            lookUpTwitter(input);
+            break;
+        case "movie-this":
+            lookUpTwitter(input);
+            break;
+        case "do-what-it-says":
+            chooseRandom();
+            break;
+        default:
+            chooseUnknown(command);
+    }
+    console.log(command);
+    console.log(typeof input);
+    console.log(input === "");
 }
 
 function liriLog(str) {
