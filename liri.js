@@ -12,7 +12,7 @@ var twitter = new TwitterReq(keys.twitter);
 start();
 
 function start() {
-    console.log("\n==============================\n  Hello! My name is Liri. \n==============================\n");
+    console.log("\n==============================\n\n   Hello! My name is Liri. \n\n==============================");
     var userInput = process.argv;
     userInput.splice(0, 2);
     if (userInput.length === 0) {
@@ -33,7 +33,7 @@ function pause(callback) {
 }
 
 function end() {
-    console.log("\n==============================\n  Goodbye\n==============================\n");
+    console.log("\n\n==============================\n\n           Goodbye!\n\n==============================\n");
 }
 
 function userChoose() {
@@ -103,7 +103,6 @@ function lookUpMovie(movieName) {
 }
 
 function displayMovie (movieObj) {
-    console.log(movieObj)
     console.log("\n==============================\n");
     console.log(movieObj.Title);
     console.log(movieObj.Released);
@@ -114,8 +113,11 @@ function displayMovie (movieObj) {
     console.log("Plot: " + movieObj.Plot);
     console.log("");
     console.log("IMDB: " + movieObj.imdbRating);
-    console.log("Rotten Tomatoes: ");
-
+    var tomatoObj = movieObj.Ratings.find(function (elem) {
+        return (elem.Source === "Rotten Tomatoes")
+    })
+    console.log("Rotten Tomatoes: " + tomatoObj.Value);
+    console.log("\n==============================\n");
 }
 
 function chooseText() {
