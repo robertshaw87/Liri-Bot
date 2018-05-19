@@ -67,11 +67,41 @@ function userChoose() {
 }
 
 function chooseTwitter() {
-    console.log("Twitter")
+    console.log("\n");
+    inquirer.prompt({
+        type: "input",
+        message: "Whose twitter would you like to see?",
+        name: "userTwitter",
+    }).then(function (response) {
+        if (response.userTwitter){
+            lookUpTwitter(response.userTwitter);
+        } else {
+            lookUpTwitter("jph_anderson");
+        }
+    })
+}
+
+function lookUpTwitter(twitterName) {
+    console.log(twitterName)
 }
 
 function chooseSpotify() {
-    console.log("Spotify")
+    console.log("\n");
+    inquirer.prompt({
+        type: "input",
+        message: "Which song would you like for me to look up?",
+        name: "userSpotify",
+    }).then(function (response) {
+        if (response.userSpotify){
+            lookUpSpotify(response.userSpotify);
+        } else {
+            lookUpSpotify("The Sign");
+        }
+    })
+}
+
+function lookUpSpotify(songName) {
+    console.log(songName)
 }
 
 function chooseMovie() {
@@ -80,7 +110,7 @@ function chooseMovie() {
         type: "input",
         message: "Which movie would you like for me to look up?",
         name: "userMovie",
-    }).then((response) => {
+    }).then(function (response) {
         if (response.userMovie){
             lookUpMovie(response.userMovie);
         } else {
