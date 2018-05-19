@@ -3,16 +3,20 @@ var keys = require("./keys.js");
 // var weather = require("weather-js");
 var TwitterReq = require('twitter');
 var SpotifyReq = require('node-spotify-api');
+
 var inquirer = require('inquirer');
 var request = require('request');
+var fs = require("fs");
 
 var spotify = new SpotifyReq(keys.spotify);
 var twitter = new TwitterReq(keys.twitter);
-
+var counter = 0;
 start();
 
 function start() {
-    console.log("\n==============================\n\n   Hello! My name is Liri. \n\n==============================");
+    console.log("\n==============================\n");
+    console.log("   Hello! My name is Liri. ");
+    console.log("\n==============================");
     var userInput = process.argv;
     userInput.splice(0, 2);
     if (userInput.length === 0) {
@@ -33,7 +37,16 @@ function pause(callback) {
 }
 
 function end() {
-    console.log("\n\n==============================\n\n           Goodbye!\n\n==============================\n");
+    console.log("\n\n==============================");
+    console.log("           Goodbye!");
+    console.log("\n==============================\n");
+}
+
+function error(errorMessage) {
+    console.log("\n\n==============================\n");
+    console.log("            Error:");
+    console.log(errorMessage);
+    console.log("\n==============================\n");
 }
 
 function userChoose() {
@@ -82,7 +95,7 @@ function chooseTwitter() {
 }
 
 function lookUpTwitter(twitterName) {
-    console.log(twitterName)
+    console.log(twitterName);
 }
 
 function chooseSpotify() {
@@ -92,16 +105,44 @@ function chooseSpotify() {
         message: "Which song would you like for me to look up?",
         name: "userSpotify",
     }).then(function (response) {
-        if (response.userSpotify){
-            lookUpSpotify(response.userSpotify);
-        } else {
-            lookUpSpotify("The Sign");
-        }
+        lookUpSpotify(response.userSpotify);
     })
 }
 
 function lookUpSpotify(songName) {
-    console.log(songName)
+    if (!songName)
+        songName = "My Heart Will Go On";
+    spotify.search({
+        type: "track",
+        query: songName
+    }, function(error, data){
+        if (error)
+            error(error);
+        else {
+            displaySong(data.tracks.items[0]);
+            pause(userChoose);
+        }
+    })
+}
+
+function displaySong(songObj) {
+    var songContent = "\n\n==============================\n";
+    if (!songObj) {
+        songContent +="\nI'm sorry. I couldn't find that song"
+    } else {
+        songContent += ("\n" + songObj.name);
+        songContent += ("\n(" + songObj.album.name + ")")
+        songContent += "\n";
+        songContent += ("\nBy: " + songObj.artists[0].name);
+        for (var i = 1; i < songObj.artists.length; i++) {
+            songContent += ("\n    " + songObj.artists[i].name);    
+        }
+        songContent += "\n";
+        songContent += ("\nPreview: " + songObj.preview_url);
+    }
+    songContent += "\n\n==============================\n";
+    console.log(songContent);
+    liriLog(songContent);
 }
 
 function chooseMovie() {
@@ -111,45 +152,64 @@ function chooseMovie() {
         message: "Which movie would you like for me to look up?",
         name: "userMovie",
     }).then(function (response) {
-        if (response.userMovie){
-            lookUpMovie(response.userMovie);
-        } else {
-            lookUpMovie("Mr. Nobody");
-        }
+        lookUpMovie(response.userMovie);
     })
 }
 
 function lookUpMovie(movieName) {
+    if (!movieName)
+        movieName = "Forrest Gump";
     var requestName = movieName.replace(" ", "+");
     var requestURL = "http://www.omdbapi.com/?t=" + requestName + "&y=&plot=short&apikey=trilogy";
     request(requestURL, function(error, response, body) {
         if (!error && response.statusCode === 200) {
             displayMovie(JSON.parse(response.body));
             pause(userChoose);
-        } else {
-            console.log(error)
-        }
+        } else
+            error(error);
     });
 }
 
 function displayMovie (movieObj) {
-    console.log("\n==============================\n");
-    console.log(movieObj.Title);
-    console.log(movieObj.Released);
-    console.log("");
-    console.log("Country: " + movieObj.Country);
-    console.log("Language: " + movieObj.Language);
-    console.log("Starring: " + movieObj.Actors);
-    console.log("Plot: " + movieObj.Plot);
-    console.log("");
-    console.log("IMDB: " + movieObj.imdbRating);
+    var movieContent = "";
+    movieContent += "\n\n==============================\n";
+    movieContent += ("\n" + movieObj.Title + "\n" + movieObj.Released);
+    songContent += "\n";
+    movieContent += ("\nCountry: " + movieObj.Country + "\nLanguage: " + movieObj.Language);
+    movieContent += ("\nPlot: " + movieObj.Plot);
+    songContent += "\n";
+    movieContent += ("\nIMDB: " + movieObj.imdbRating);
     var tomatoObj = movieObj.Ratings.find(function (elem) {
-        return (elem.Source === "Rotten Tomatoes")
+        return (elem.Source === "Rotten Tomatoes");
     })
-    console.log("Rotten Tomatoes: " + tomatoObj.Value);
-    console.log("\n==============================\n");
+    if (tomatoObj) {
+        movieContent += ("\nRotten Tomatoes: " + tomatoObj.Value);
+    }
+    movieContent += ("\n\n==============================\n");
+    console.log(movieContent);
+    liriLog(movieContent);
 }
 
 function chooseText() {
-    console.log("Text")
+    fs.readFile("random.txt", "utf8", function(error, data) {
+        if (!error) {
+                  // We will then print the contents of data
+            console.log(data);
+        
+            // Then split it by commas (to make it more readable)
+            var dataArr = data.split(", ");
+        
+            // We will then re-display the content as an array for later use.
+            console.log(dataArr);
+        } else
+            error(error);
+     
+      });
+      
+}
+
+function liriLog(str) {
+    fs.appendFile("log.txt", str, function(error){
+        if (error)
+            error(error)});
 }
