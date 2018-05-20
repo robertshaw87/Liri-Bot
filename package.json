@@ -19,6 +19,7 @@
   "homepage": "https://github.com/robertshaw87/Liri-Bot#readme",
   "dependencies": {
     "dotenv": "^5.0.1",
+    "figlet": "^1.2.0",
     "inquirer": "^5.2.0",
     "moment": "^2.22.1",
     "node-spotify-api": "^1.0.7",
