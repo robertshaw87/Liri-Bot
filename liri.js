@@ -1,15 +1,18 @@
 require('dotenv').config();
+
 var keys = require("./keys.js");
 
 var TwitterReq = require('twitter');
 var SpotifyReq = require('node-spotify-api');
 
-var inquirer = require('inquirer');
-var request = require('request');
-var fs = require("fs");
-
 var spotify = new SpotifyReq(keys.spotify);
 var twitter = new TwitterReq(keys.twitter);
+
+require('moment');
+
+var request = require('request');
+var inquirer = require('inquirer');
+var fs = require("fs");
 
 start();
 
@@ -105,6 +108,24 @@ function lookUpTwitter(twitterName) {
         } else 
             errorDisplay(error);
     });
+}
+
+function displayTwitter(tweets) {
+    var twitterContent = "\n\n==============================\n";
+    for (var i = tweets.length - 1; i >= 0; i--) {
+        twitterContent += parseTweet(tweets[i]);
+    }
+    twitterContent += "\n\n==============================\n";
+    console.log(twitterContent);
+    liriLog(twitterContent);
+}
+
+function parseTweet(tweet) {
+    var tweetContent = "\n------------------------------";
+    tweetContent += ("\n" + tweet.created_at);
+    tweetContent += ("\n"  + tweet.text);
+    tweetContent += "\n------------------------------";
+    return tweetContent;
 }
 
 function chooseSpotify() {
