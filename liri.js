@@ -8,7 +8,7 @@ var SpotifyReq = require('node-spotify-api');
 var spotify = new SpotifyReq(keys.spotify);
 var twitter = new TwitterReq(keys.twitter);
 
-require('moment');
+var moment = require('moment');
 
 var request = require('request');
 var inquirer = require('inquirer');
@@ -17,9 +17,10 @@ var fs = require("fs");
 start();
 
 function start() {
-    console.log("\n==============================\n");
-    console.log("   Hello! My name is Liri. ");
-    console.log("\n==============================");
+
+    console.log("\n============================================================\n");
+    console.log("                  Hello! My name is Liri. ");
+    console.log("\n============================================================");
     var userInput = process.argv;
     userInput.splice(0, 2);
     if (userInput.length === 0) {
@@ -40,16 +41,16 @@ function pause(callback) {
 }
 
 function end() {
-    console.log("\n\n==============================\n");
-    console.log("           Goodbye!");
-    console.log("\n==============================\n");
+    console.log("\n\n============================================================\n");
+    console.log("                          Goodbye!");
+    console.log("\n============================================================\n");
 }
 
 function errorDisplay(errorMessage) {
-    console.log("\n\n==============================\n");
-    console.log("            Error:");
-    console.log(errorMessage);
-    console.log("\n==============================\n");
+    console.log("\n\n============================================================\n");
+    console.log("                           Error:");
+    console.log(" " + errorMessage);
+    console.log("\n============================================================\n");
 }
 
 // returns a random integer between 0 and the argument (inclusive)
@@ -111,20 +112,21 @@ function lookUpTwitter(twitterName) {
 }
 
 function displayTwitter(tweets) {
-    var twitterContent = "\n\n==============================\n";
+    var twitterContent = "\n\n============================================================\n";
     for (var i = tweets.length - 1; i >= 0; i--) {
         twitterContent += parseTweet(tweets[i]);
     }
-    twitterContent += "\n\n==============================\n";
+    twitterContent += "\n\n============================================================\n";
     console.log(twitterContent);
     liriLog(twitterContent);
 }
 
 function parseTweet(tweet) {
-    var tweetContent = "\n------------------------------";
-    tweetContent += ("\n" + tweet.created_at);
+    var tweetContent = "\n------------------------------------------------------------";
+    var tweetTime = moment(tweet.created_at, "dddd MMM DD HH:mm:ss ZZ YYYY");
+    tweetContent += ("\n" + tweetTime.format("MMMM do YYYY h:mm a"));
     tweetContent += ("\n"  + tweet.text);
-    tweetContent += "\n------------------------------";
+    tweetContent += "\n------------------------------------------------------------";
     return tweetContent;
 }
 
@@ -156,7 +158,7 @@ function lookUpSpotify(songName) {
 }
 
 function displaySong(songObj) {
-    var songContent = "\n\n==============================\n";
+    var songContent = "\n\n============================================================\n";
     if (!songObj) {
         songContent +="\nI'm sorry. I couldn't find that song"
     } else {
@@ -170,7 +172,7 @@ function displaySong(songObj) {
         songContent += "\n";
         songContent += ("\nPreview: " + songObj.preview_url);
     }
-    songContent += "\n\n==============================\n";
+    songContent += "\n\n============================================================\n";
     console.log(songContent);
     liriLog(songContent);
 }
@@ -202,7 +204,7 @@ function lookUpMovie(movieName) {
 
 function displayMovie (movieObj) {
     var movieContent = "";
-    movieContent += "\n\n==============================\n";
+    movieContent += "\n\n============================================================\n";
     movieContent += ("\n" + movieObj.Title + "\n" + movieObj.Released);
     movieContent += "\n";
     movieContent += ("\nCountry: " + movieObj.Country + "\nLanguage: " + movieObj.Language);
@@ -215,7 +217,7 @@ function displayMovie (movieObj) {
     if (tomatoObj) {
         movieContent += ("\nRotten Tomatoes: " + tomatoObj.Value);
     }
-    movieContent += ("\n\n==============================\n");
+    movieContent += ("\n\n============================================================\n");
     console.log(movieContent);
     liriLog(movieContent);
 }
@@ -233,14 +235,14 @@ function chooseRandom() {
 }
 
 function chooseUnknown(str) {
-    console.log("\n\n==============================\n");
-    console.log("I'm sorry. I don't know how to\n " + str + "\n");
-    console.log("     Valid commands are:");
-    console.log("          my-tweets")
-    console.log("      spotify-this-song")
-    console.log("          movie-this")
-    console.log("       do-what-it-says")
-    console.log("\n==============================\n");
+    console.log("\n\n============================================================\n");
+    console.log(" I'm sorry. I don't know how to\n " + str + "\n");
+    console.log("                    Valid commands are:");
+    console.log("                         my-tweets")
+    console.log("                     spotify-this-song")
+    console.log("                         movie-this")
+    console.log("                      do-what-it-says")
+    console.log("\n============================================================\n");
 }
 
 function parse(commandArray) {
