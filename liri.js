@@ -1,6 +1,6 @@
 require('dotenv').config();
 var keys = require("./keys.js");
-// var weather = require("weather-js");
+
 var TwitterReq = require('twitter');
 var SpotifyReq = require('node-spotify-api');
 
@@ -10,7 +10,7 @@ var fs = require("fs");
 
 var spotify = new SpotifyReq(keys.spotify);
 var twitter = new TwitterReq(keys.twitter);
-var counter = 0;
+
 start();
 
 function start() {
@@ -22,7 +22,7 @@ function start() {
     if (userInput.length === 0) {
         userChoose();
     } else {
-        console.log("COMMAND LINE ARGUMENTS");
+        parse(userInput);
     }
 }
 
@@ -37,12 +37,12 @@ function pause(callback) {
 }
 
 function end() {
-    console.log("\n\n==============================");
+    console.log("\n\n==============================\n");
     console.log("           Goodbye!");
     console.log("\n==============================\n");
 }
 
-function error(errorMessage) {
+function errorDisplay(errorMessage) {
     console.log("\n\n==============================\n");
     console.log("            Error:");
     console.log(errorMessage);
@@ -81,7 +81,7 @@ function userChoose() {
                 end();
                 break;
         }
-    })
+    });
 }
 
 function chooseTwitter() {
@@ -92,13 +92,19 @@ function chooseTwitter() {
         name: "userTwitter",
     }).then(function (response) {
         lookUpTwitter(response.userTwitter);
-    })
+    });
 }
 
 function lookUpTwitter(twitterName) {
     if (!twitterName)
         twitterName = "jph_anderson";
-    console.log(twitterName);
+    twitter.get("statuses/user_timeline", {screen_name: twitterName}, function (error, tweets, response){
+        if (!error) {
+            displayTwitter(tweets);
+            pause(userChoose)
+        } else 
+            errorDisplay(error);
+    });
 }
 
 function chooseSpotify() {
@@ -109,7 +115,7 @@ function chooseSpotify() {
         name: "userSpotify",
     }).then(function (response) {
         lookUpSpotify(response.userSpotify);
-    })
+    });
 }
 
 function lookUpSpotify(songName) {
@@ -119,13 +125,13 @@ function lookUpSpotify(songName) {
         type: "track",
         query: songName
     }, function(error, data){
-        if (error)
-            error(error);
-        else {
+        if (!error){
             displaySong(data.tracks.items[0]);
             pause(userChoose);
         }
-    })
+        else
+            errorDisplay(error);
+    });
 }
 
 function displaySong(songObj) {
@@ -156,7 +162,7 @@ function chooseMovie() {
         name: "userMovie",
     }).then(function (response) {
         lookUpMovie(response.userMovie);
-    })
+    });
 }
 
 function lookUpMovie(movieName) {
@@ -169,7 +175,7 @@ function lookUpMovie(movieName) {
             displayMovie(JSON.parse(response.body));
             pause(userChoose);
         } else
-            error(error);
+            errorDisplay(error);
     });
 }
 
@@ -184,7 +190,7 @@ function displayMovie (movieObj) {
     movieContent += ("\nIMDB: " + movieObj.imdbRating);
     var tomatoObj = movieObj.Ratings.find(function (elem) {
         return (elem.Source === "Rotten Tomatoes");
-    })
+    });
     if (tomatoObj) {
         movieContent += ("\nRotten Tomatoes: " + tomatoObj.Value);
     }
@@ -201,12 +207,19 @@ function chooseRandom() {
             command = command.split(" ")
             parse(command);
         } else
-            error(error);
+            errorDisplay(error);
       });
 }
 
-function chooseUnknown() {
-    console.log("unrecognized command");
+function chooseUnknown(str) {
+    console.log("\n\n==============================\n");
+    console.log("I'm sorry. I don't know how to\n " + str + "\n");
+    console.log("     Valid commands are:");
+    console.log("          my-tweets")
+    console.log("      spotify-this-song")
+    console.log("          movie-this")
+    console.log("       do-what-it-says")
+    console.log("\n==============================\n");
 }
 
 function parse(commandArray) {
@@ -218,24 +231,21 @@ function parse(commandArray) {
             lookUpTwitter(input);
             break;
         case "spotify-this-song":
-            lookUpTwitter(input);
+            lookUpSpotify(input);
             break;
         case "movie-this":
-            lookUpTwitter(input);
+            lookUpMovie(input);
             break;
         case "do-what-it-says":
             chooseRandom();
             break;
         default:
-            chooseUnknown(command);
+            chooseUnknown(command + " " + input);
     }
-    console.log(command);
-    console.log(typeof input);
-    console.log(input === "");
 }
 
 function liriLog(str) {
     fs.appendFile("log.txt", str, function(error){
         if (error)
-            error(error)});
+            errorDisplay(error)});
 }
