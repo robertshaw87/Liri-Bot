@@ -34,9 +34,6 @@ function start() {
         } else
             errorDisplay(error);
     })
-    // console.log("\n============================================================\n");
-    // console.log("                  Hello! My name is Liri. ");
-    // console.log("\n============================================================");
 }
 
 function pause(callback) {
