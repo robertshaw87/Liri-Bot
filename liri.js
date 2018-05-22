@@ -155,6 +155,7 @@ function lookUpSpotify(songName) {
         query: songName
     }, function(error, data){
         if (!error){
+            console.log(JSON.stringify(data, null, 2))
             displaySong(data.tracks.items[0]);
             pause(userChoose);
         }

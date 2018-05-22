@@ -84,15 +84,14 @@ With your API keys replacing the placeholders.
 
 ## Challenges
 
-This was my first time working extensively with Firebase, so I had some issues with the logic flow neccesary to make my app do everything I wanted it to do. Thankfully, I managed to work through it by leaning heavily on the documentation and other online resources. This was a great challenge!
+This is my first step away from the front end. I'm really enjoying just working in the terminal. The most challenging part of this project was actually figuring out Spotify's JSON data structure. Diving into it in the terminal wasn't the easiest because of the sheer amount of the data. 
 
-![Ready Token](assets/images/ready-token.PNG "Ready Token")
+![Spotify Response](readme/spotify-response.png "Spotify Response")
 
-In order to handle the asynchronous nature of two different people playing, I ended up using a ready token to indicate whether a player has chosen a play. I listened for changes to the ready state of both players and when they had each selected a play, then I went into the logic behind the wins and losses.
+In the end, I split it into finding the song object from the initial reponse and then diving into the song object afterwards.
 
-![Queue](assets/images/queue.PNG "Queue")
-
-I created a list of connected players to track the queue. Each time a new player enters or leaves, I have the players check to see if someone needs to moved up into the game room. If one of the players leave, the remaining player evaluates the queue and populates the game room with him or herself and the first person in the queue. In the case of there not being anyone in the queue (and thus no players in the game room running the queue logic) the first person to enter the queue automatically gets placed in the game room.
+![Find the Song Object](readme/Spotify1.png "Find the Song Object")
+![Find the Song Details](readme/Spotify2.png "Find the Song Details")
 
 ## Authors
 
